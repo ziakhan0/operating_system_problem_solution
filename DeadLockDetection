@@ -1,0 +1,101 @@
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+const int NUM_PROCESSES = 6;
+
+const char* processNames[NUM_PROCESSES] = { "P1", "P2", "P3", "P4", "P5", "P6" };
+char holding[NUM_PROCESSES][3] = { "R1", "R2", "R3", "R4", "R5", "R6" };
+char requesting[NUM_PROCESSES][3] = { "R2", "R3", "R4", "R5", "R6", "R1" };
+
+void showState(const char* title) {
+    cout << "\n--- " << title << " ---\n";
+    for (int i = 0; i < NUM_PROCESSES; ++i) {
+        cout << processNames[i] << ": holds " << holding[i]
+            << ", requests " << requesting[i] << "\n";
+    }
+}
+
+bool isDeadlock() {
+    for (int i = 0; i < NUM_PROCESSES; ++i) {
+        bool found = false;
+        for (int j = 0; j < NUM_PROCESSES; ++j) {
+            if (strcmp(requesting[i], holding[j]) == 0) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void preemptResources() {
+    cout << "\nPreempting resources from processes...\n";
+    for (int i = 0; i < NUM_PROCESSES; ++i) {
+        if (strcmp(holding[i], "") != 0) {
+            cout << processNames[i] << " has resource " << holding[i] << " preempted.\n";
+            strcpy(holding[i], "");
+        }
+    }
+}
+
+void rollbackToSafeState() {
+    cout << "\nRolling back processes to a safe state...\n";
+    for (int i = 0; i < NUM_PROCESSES; ++i) {
+        strcpy(holding[i], "");
+        strcpy(requesting[i], "");
+    }
+    cout << "System state reset to a safe configuration.\n";
+}
+
+void terminateProcesses() {
+    cout << "\nTerminating one or more processes to break the deadlock...\n";
+    cout << "Terminating process " << processNames[NUM_PROCESSES - 1] << ".\n";
+    strcpy(holding[NUM_PROCESSES - 1], "");
+    strcpy(requesting[NUM_PROCESSES - 1], "");
+}
+
+int main() {
+    showState("Initial State");
+
+    if (isDeadlock()) {
+        cout << "\nDeadlock detected initially.\n";
+    }
+    else {
+        cout << "\nNo deadlock initially.\n";
+    }
+
+    preemptResources();
+    showState("After Preemption");
+    if (isDeadlock()) {
+        cout << "\nDeadlock detected after Preemption.\n";
+    }
+    else {
+        cout << "\nNo deadlock after Preemption.\n";
+    }
+
+    rollbackToSafeState();
+    showState("After Rollback to Safe State");
+    if (isDeadlock()) {
+        cout << "\nDeadlock detected after Rollback to Safe State.\n";
+    }
+    else {
+        cout << "\nNo deadlock after Rollback to Safe State.\n";
+    }
+
+    terminateProcesses();
+    showState("After Termination of Process");
+    if (isDeadlock()) {
+        cout << "\nDeadlock detected after Termination.\n";
+    }
+    else {
+        cout << "\nNo deadlock after Termination.\n";
+    }
+
+    cout << "\nAll deadlock resolution strategies applied.\n";
+    system("pause");
+    return 0;
+}

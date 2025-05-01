@@ -1,0 +1,82 @@
+#include<iostream>
+using namespace std;
+#define SIZE 5
+void firstfit(int segments[],int programsize)
+{
+	cout << "\nFirst Fit Allocation:\n";
+	for (int i = 0; i < SIZE; i++)
+	{
+		if (segments[i] >= programsize)
+		{
+			cout << "Program of size " << programsize << "KB placed in segment "
+				<< (i + 1) << "\n";
+			return;
+		}
+	}
+	cout << "No suitable segment found for first fit.\n";
+}
+void bestfit(int segments[], int programsize)
+{
+	cout << "\nBest Fit Allocation:\n";
+	int bestIndex = -1;
+	int minWaste = 99999;
+	for (int i = 0; i < SIZE; i++)
+	{
+		if (segments[i] >= programsize)
+		{
+			int wast = segments[i] - programsize;
+			if (wast < minWaste)
+			{
+				minWaste = wast;
+				bestIndex = i;
+			}
+		}
+	}
+	if (bestIndex != -1)
+	{
+		cout << "Program of size " << programsize << "KB placed in segment "
+			<< (bestIndex + 1) << "\n";
+	}
+	else
+	{
+		cout << "No suitable segment found for best fit.\n";
+	}
+}
+void worstFit(int segments[], int programsize)
+{
+	cout << "\nWorst Fit Allocation:\n";
+	int worstIndex = -1;
+	int maxWaste = -1;
+	for (int i = 0; i < SIZE; i++)
+	{
+		if (segments[i] >= programsize)
+		{
+			int wast = segments[i] - programsize;
+			if (wast > maxWaste)
+			{
+				maxWaste = wast;
+				worstIndex = i;
+			}
+		}
+	}
+	if (worstIndex != -1)
+	{
+		cout << "Program of size " << programsize << "KB placed in segment "
+			<< (worstIndex + 1) <<"\n";
+	}
+	else
+	{
+		cout << "No suitable segment found for worst fit.\n";
+	}
+}
+int main()
+{
+	int segments[SIZE] = { 6, 17, 25, 14, 19 };
+	int programsize = 13;
+	firstfit(segments,programsize);
+	bestfit(segments, programsize);
+	worstFit(segments, programsize);
+
+	system("pause");
+	return 0;
+}
